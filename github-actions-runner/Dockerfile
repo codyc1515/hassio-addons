@@ -2,6 +2,9 @@ FROM ubuntu:22.04
 
 ARG RUNNER_VERSION="2.333.1"
 ARG PYTHON_RELEASE_TAGS="3.11.15-22631496413 3.12.13-22652080177"
+ARG PLAYWRIGHT_PY_VERSION="1.58.0"
+ARG REQUESTS_VERSION="2.33.1"
+ARG PIP_VERSION="26.0.1"
 ARG TARGETARCH
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -94,6 +97,9 @@ RUN set -eux; \
       ln -sf "${PYTHON_BIN}" "${DEST}/bin/${PYTHON_BIN_MM}"; \
       if [ ! -e "${DEST}/bin/python" ]; then ln -s "${PYTHON_BIN}" "${DEST}/bin/python"; fi; \
       chmod +x "${DEST}/python" "${DEST}/bin/${PYTHON_BIN}" "${DEST}/bin/${PYTHON_BIN_MM}" "${DEST}/bin/python"; \
+      "${DEST}/python" -m pip install --no-cache-dir --upgrade "pip==${PIP_VERSION}"; \
+      "${DEST}/python" -m pip install --no-cache-dir "playwright==${PLAYWRIGHT_PY_VERSION}"; \
+      "${DEST}/python" -m pip install --no-cache-dir "requests==${REQUESTS_VERSION}"; \
       touch "${TOOLCACHE_ROOT}/Python/${PYTHON_VERSION}/${PYTHON_ARCH}.complete"; \
     done; \
     rm -rf /tmp/python-toolcache
