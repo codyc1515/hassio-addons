@@ -85,18 +85,8 @@ RUN set -eux; \
       rm -rf /tmp/python-toolcache/*; \
       curl -fsSL "${ASSET_URL}" -o /tmp/python-toolcache/python.tgz; \
       tar -xzf /tmp/python-toolcache/python.tgz -C /tmp/python-toolcache; \
-      PYTHON_MAJOR="$(echo "${PYTHON_VERSION}" | cut -d. -f1)"; \
-      PYTHON_MINOR="$(echo "${PYTHON_VERSION}" | cut -d. -f2)"; \
-      PYTHON_BIN="python${PYTHON_MAJOR}.${PYTHON_MINOR}"; \
-      PYTHON_BIN_MM="python${PYTHON_MAJOR}${PYTHON_MINOR}"; \
+      AGENT_TOOLSDIRECTORY="${TOOLCACHE_ROOT}" RUNNER_TOOL_CACHE="${TOOLCACHE_ROOT}" /bin/sh /tmp/python-toolcache/setup.sh; \
       DEST="${TOOLCACHE_ROOT}/Python/${PYTHON_VERSION}/${PYTHON_ARCH}"; \
-      mkdir -p "${DEST}"; \
-      cp -R /tmp/python-toolcache/. "${DEST}/"; \
-      rm -f "${DEST}/setup.sh" "${DEST}/python.tgz"; \
-      ln -sf "./bin/${PYTHON_BIN}" "${DEST}/python"; \
-      ln -sf "${PYTHON_BIN}" "${DEST}/bin/${PYTHON_BIN_MM}"; \
-      if [ ! -e "${DEST}/bin/python" ]; then ln -s "${PYTHON_BIN}" "${DEST}/bin/python"; fi; \
-      chmod +x "${DEST}/python" "${DEST}/bin/${PYTHON_BIN}" "${DEST}/bin/${PYTHON_BIN_MM}" "${DEST}/bin/python"; \
       "${DEST}/python" -m pip install --no-cache-dir --upgrade "pip==${PIP_VERSION}"; \
       "${DEST}/python" -m pip install --no-cache-dir "playwright==${PLAYWRIGHT_PY_VERSION}"; \
       "${DEST}/python" -m pip install --no-cache-dir "requests==${REQUESTS_VERSION}"; \
