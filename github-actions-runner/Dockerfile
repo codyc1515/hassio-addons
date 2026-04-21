@@ -85,7 +85,7 @@ RUN set -eux; \
       rm -rf /tmp/python-toolcache/*; \
       curl -fsSL "${ASSET_URL}" -o /tmp/python-toolcache/python.tgz; \
       tar -xzf /tmp/python-toolcache/python.tgz -C /tmp/python-toolcache; \
-      AGENT_TOOLSDIRECTORY="${TOOLCACHE_ROOT}" RUNNER_TOOL_CACHE="${TOOLCACHE_ROOT}" /bin/sh /tmp/python-toolcache/setup.sh; \
+      (cd /tmp/python-toolcache && AGENT_TOOLSDIRECTORY="${TOOLCACHE_ROOT}" RUNNER_TOOL_CACHE="${TOOLCACHE_ROOT}" /bin/sh ./setup.sh); \
       DEST="${TOOLCACHE_ROOT}/Python/${PYTHON_VERSION}/${PYTHON_ARCH}"; \
       "${DEST}/python" -m pip install --no-cache-dir --upgrade "pip==${PIP_VERSION}"; \
       "${DEST}/python" -m pip install --no-cache-dir "playwright==${PLAYWRIGHT_PY_VERSION}"; \
