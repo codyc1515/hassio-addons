@@ -1,0 +1,22 @@
+name: GitHub Actions Runner
+slug: github_actions_runner
+description: GitHub Actions self-hosted runner as a Home Assistant app.
+version: "latest"
+url: https://github.com/codyc1515/hassio-addons/tree/main/github-actions-runner
+arch:
+  - aarch64
+  - amd64
+startup: services
+boot: auto
+init: false
+hassio_api: true
+image: ghcr.io/codyc1515/github-actions-runner
+options:
+  github_url: null
+  runner_token: null
+schema:
+  github_url: str
+  runner_token: password
+  runner_name: str?
+  runner_labels: str?
+  runner_workdir: str?
