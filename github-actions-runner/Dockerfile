@@ -64,13 +64,15 @@ RUN mkdir -p /home/runner/actions-runner \
 
 RUN /home/runner/actions-runner/bin/installdependencies.sh
 
-ENV AGENT_TOOLSDIRECTORY=/home/runner/actions-runner/_work/_tool
-ENV RUNNER_TOOL_CACHE=/home/runner/actions-runner/_work/_tool
+ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
+ENV RUNNER_TOOL_CACHE=/opt/hostedtoolcache
 
 # Pre-seed the Python toolcache so actions/setup-python can resolve common
 # versions without downloading at job runtime.
 # Use pinned release tags to keep builds deterministic and avoid GitHub API
 # lookups and pip/network side effects in setup scripts.
+# The python-versions archives are not relocatable: their binaries are built
+# with an /opt/hostedtoolcache runpath, so install them there.
 RUN set -eux; \
     case "${TARGETARCH}" in \
       amd64) PYTHON_ARCH="x64" ;; \
@@ -95,7 +97,7 @@ RUN set -eux; \
     rm -rf /tmp/python-toolcache
 
 COPY run.sh /run.sh
-RUN chmod +x /run.sh && chown -R runner:runner /home/runner /run.sh
+RUN chmod +x /run.sh && chown -R runner:runner /home/runner /opt/hostedtoolcache /run.sh
 
 USER runner
 WORKDIR /home/runner/actions-runner
