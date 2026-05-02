@@ -22,7 +22,7 @@ This repository provides a Home Assistant app named **GitHub Actions Runner**.
 Required:
 
 - `github_url`
-- `runner_token`
+- `runner_token` (used for initial registration)
 
 Optional:
 
@@ -33,6 +33,8 @@ Optional:
 ## Start
 
 Start the app from Home Assistant.
+
+The runner is now persistent across restarts. It is not auto-removed on container stop, so normal disconnects/restarts do not require re-registration or a new token.
 
 The container image defaults to:
 - `ghcr.io/codyc1515/github-actions-runner:latest`

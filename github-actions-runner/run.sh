@@ -51,22 +51,16 @@ if [[ -z "${GITHUB_URL:-}" ]]; then
   exit 1
 fi
 
-if [[ -z "${RUNNER_TOKEN:-}" ]]; then
-  echo "RUNNER_TOKEN is required"
-  exit 1
-fi
-
 RUNNER_NAME="${RUNNER_NAME:-homeassistant}"
 RUNNER_WORKDIR="${RUNNER_WORKDIR:-_work}"
 RUNNER_LABELS="${RUNNER_LABELS:-self-hosted,linux,docker}"
 
-cleanup() {
-  echo "Removing runner..."
-  ./config.sh remove --unattended --token "${RUNNER_TOKEN}" || true
-}
-trap cleanup EXIT INT TERM
-
 if [[ ! -f .runner ]]; then
+  if [[ -z "${RUNNER_TOKEN:-}" ]]; then
+    echo "RUNNER_TOKEN is required for initial runner registration"
+    exit 1
+  fi
+
   echo "Configuring runner..."
   ./config.sh \
     --url "${GITHUB_URL}" \
@@ -76,6 +70,8 @@ if [[ ! -f .runner ]]; then
     --labels "${RUNNER_LABELS}" \
     --unattended \
     --replace
+else
+  echo "Runner already configured. Skipping registration."
 fi
 
 echo "Starting runner..."
