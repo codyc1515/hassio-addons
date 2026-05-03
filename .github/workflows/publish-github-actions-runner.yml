@@ -24,6 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Read add-on version
+        id: addon
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's/^version:[[:space:]]*"\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' github-actions-runner/config.yaml | head -n1)"
+          if [[ -z "${version}" ]]; then
+            echo "Failed to read version from github-actions-runner/config.yaml" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -43,6 +55,7 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
+            type=raw,value=${{ steps.addon.outputs.version }}
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=tag
             type=sha,prefix=sha-
