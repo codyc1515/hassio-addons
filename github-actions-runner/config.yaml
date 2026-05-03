@@ -1,7 +1,7 @@
 name: GitHub Actions Runner
 slug: github_actions_runner
 description: GitHub Actions self-hosted runner as a Home Assistant app.
-version: "latest"
+version: "0.1.1"
 url: https://github.com/codyc1515/hassio-addons/tree/main/github-actions-runner
 arch:
   - aarch64
