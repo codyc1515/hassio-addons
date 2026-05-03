@@ -1,10 +1,10 @@
 FROM ubuntu:22.04
 
 ARG RUNNER_VERSION="2.334.0"
-ARG PYTHON_RELEASE_TAGS="3.11.15-22631496413 3.12.13-22652080177"
+ARG PYTHON_RELEASE_TAGS="3.12.13-22652080177"
 ARG PLAYWRIGHT_PY_VERSION="1.58.0"
 ARG REQUESTS_VERSION="2.33.1"
-ARG PIP_VERSION="26.0.1"
+ARG RUN_INSTALLDEPS="false"
 ARG TARGETARCH
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -41,6 +41,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libcairo2 \
     libpango-1.0-0 \
     libasound2 \
+    libicu70 \
+    liblttng-ust1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -m -d /home/runner runner \
@@ -62,10 +64,12 @@ RUN mkdir -p /home/runner/actions-runner \
     && tar -xzf actions-runner.tar.gz \
     && rm actions-runner.tar.gz
 
-RUN /home/runner/actions-runner/bin/installdependencies.sh
-
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 ENV RUNNER_TOOL_CACHE=/opt/hostedtoolcache
+
+RUN if [ "${RUN_INSTALLDEPS}" = "true" ]; then \
+      /home/runner/actions-runner/bin/installdependencies.sh; \
+    fi
 
 # Pre-seed the Python toolcache so actions/setup-python can resolve common
 # versions without downloading at job runtime.
@@ -89,7 +93,6 @@ RUN set -eux; \
       tar -xzf /tmp/python-toolcache/python.tgz -C /tmp/python-toolcache; \
       (cd /tmp/python-toolcache && AGENT_TOOLSDIRECTORY="${TOOLCACHE_ROOT}" RUNNER_TOOL_CACHE="${TOOLCACHE_ROOT}" /bin/sh ./setup.sh); \
       DEST="${TOOLCACHE_ROOT}/Python/${PYTHON_VERSION}/${PYTHON_ARCH}"; \
-      "${DEST}/python" -m pip install --no-cache-dir --upgrade "pip==${PIP_VERSION}"; \
       "${DEST}/python" -m pip install --no-cache-dir "playwright==${PLAYWRIGHT_PY_VERSION}"; \
       "${DEST}/python" -m pip install --no-cache-dir "requests==${REQUESTS_VERSION}"; \
       touch "${TOOLCACHE_ROOT}/Python/${PYTHON_VERSION}/${PYTHON_ARCH}.complete"; \
