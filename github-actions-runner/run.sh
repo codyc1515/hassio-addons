@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /home/runner/actions-runner
+RUNNER_HOME="/home/runner/actions-runner"
+PERSIST_ROOT="/data/actions-runner"
+
+mkdir -p "${PERSIST_ROOT}"
+
+# Keep runner registration state on /data so it survives container recreation.
+for f in .credentials .credentials_rsaparams .runner .service; do
+  if [[ -f "${PERSIST_ROOT}/${f}" && ! -f "${RUNNER_HOME}/${f}" ]]; then
+    cp -f "${PERSIST_ROOT}/${f}" "${RUNNER_HOME}/${f}"
+  fi
+done
+
+cd "${RUNNER_HOME}"
 
 # Home Assistant add-on fallback:
 # if env vars are missing, load values from /data/options.json.
@@ -70,6 +82,12 @@ if [[ ! -f .runner ]]; then
     --labels "${RUNNER_LABELS}" \
     --unattended \
     --replace
+
+  for f in .credentials .credentials_rsaparams .runner .service; do
+    if [[ -f "${f}" ]]; then
+      cp -f "${f}" "${PERSIST_ROOT}/${f}"
+    fi
+  done
 else
   echo "Runner already configured. Skipping registration."
 fi

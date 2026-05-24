@@ -17,7 +17,7 @@ Optional options:
 
 ## Notes
 
-- This app uses image `ghcr.io/codyc1515/github-actions-runner` with version `latest`.
+- This app uses image `ghcr.io/codyc1515/github-actions-runner` with add-on version tags (for example `0.1.2`).
 - The runner is persistent: container restarts do not auto-remove or re-register it.
 - After first successful registration, the runner starts from existing local config and does not need a fresh token on normal reconnect/restart.
 - Docker socket is expected for Docker-based job execution.
