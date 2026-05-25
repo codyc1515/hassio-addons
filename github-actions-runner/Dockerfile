@@ -100,9 +100,9 @@ RUN set -eux; \
     rm -rf /tmp/python-toolcache
 
 COPY run.sh /run.sh
-RUN chmod +x /run.sh && chown -R runner:runner /home/runner /opt/hostedtoolcache /run.sh
+RUN chmod +x /run.sh && chown -R runner:runner /home/runner /opt/hostedtoolcache
 
-USER runner
+USER root
 WORKDIR /home/runner/actions-runner
 
 ENTRYPOINT ["/run.sh"]

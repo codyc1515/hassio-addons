@@ -4,6 +4,12 @@ set -euo pipefail
 RUNNER_HOME="/home/runner/actions-runner"
 PERSIST_ROOT="/data/actions-runner"
 
+if [[ "$(id -u)" = "0" ]]; then
+  mkdir -p "${PERSIST_ROOT}"
+  chown -R runner:runner "${PERSIST_ROOT}" "${RUNNER_HOME}"
+  exec sudo -E -H -u runner /run.sh
+fi
+
 mkdir -p "${PERSIST_ROOT}"
 
 # Keep runner registration state on /data so it survives container recreation.
