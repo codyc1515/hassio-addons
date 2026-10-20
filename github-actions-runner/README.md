@@ -1,7 +1,3 @@
-# GitHub Actions Runner (Home Assistant App)
-
-Run a GitHub Actions self-hosted runner as a Home Assistant app.
-
 ## Configuration
 
 Required options:
